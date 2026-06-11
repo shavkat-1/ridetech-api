@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Enums\UserRole;
 
 class User extends Authenticatable
 {
@@ -20,7 +21,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
+        'role', // Роль пользователя (пассажир или водитель)
     ];
 
     /**
@@ -39,7 +42,29 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'email_verified_at' => 'datetime',  // Приведение даты верификации email к объекту Carbon
+        'password' => 'hashed',   // Автоматическое хеширование пароля при сохранении в базу данных
+        'role' => UserRole::class, // Приведение роли к enum UserRole. Превратит строку из базы в строгий объект Enum
     ];
+    
+
+
+    // поездки, в которых пользователь выступает водителем
+    public function tripsAsDriver()
+    {
+        return $this->hasMany(Trip::class, 'driver_id');
+    }
+
+
+    // поездки, в которых пользователь выступает пассажиром
+    public function tripsAsPassenger()
+    {
+        return $this->hasMany(Trip::class, 'passenger_id');
+    }
+
+
+    public function cars()
+    {
+        return $this->hasMany(Car::class, 'driver_id');
+    }
 }
