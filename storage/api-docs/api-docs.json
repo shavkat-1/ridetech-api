@@ -1,0 +1,1364 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "RideTech API Documentation",
+        "description": "Чистая интерактивная документация API для сервиса RideTech (вынесена отдельно от контроллеров)",
+        "contact": {
+            "email": "shavkat@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "Основной сервер разработки"
+        }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация пользователя",
+                "description": "Позволяет новому пользователю зарегистрироваться в системе.",
+                "operationId": "2243b6476a281adbdc277bc744d74513",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Пользователь успешно зарегистрирован",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "success": true,
+                                    "message": "Пользователь успешно зарегистрирован",
+                                    "data": {
+                                        "id": 1,
+                                        "name": "Иван Иванов",
+                                        "email": "ivan@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Авторизация пользователя",
+                "description": "Позволяет пользователю войти в систему и получить токен доступа.",
+                "operationId": "dcd4556855ab93aca2b7045603df4de6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход в систему",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "success": true,
+                                    "message": "Успешный вход в систему",
+                                    "data": {
+                                        "token": "2|eyJ0eXAiOiJKV1QiLC..."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Неверные учетные данные"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход из системы",
+                "description": "Позволяет пользователю выйти из системы, деактивируя текущий токен доступа.",
+                "operationId": "5eaf22cd633563a75fa4d29c1b3cb52c",
+                "responses": {
+                    "200": {
+                        "description": "Успешный выход из системы",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "success": true,
+                                    "message": "Успешный выход из системы"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cars": {
+            "get": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Получить список автомобилей текущего водителя",
+                "description": "Возвращает массив всех автомобилей, которые принадлежат текущему авторизованному водителю.",
+                "operationId": "getDriverCars",
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "driver_id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "brand": {
+                                                        "type": "string",
+                                                        "example": "Hyundai"
+                                                    },
+                                                    "model": {
+                                                        "type": "string",
+                                                        "example": "Sonata"
+                                                    },
+                                                    "year": {
+                                                        "type": "integer",
+                                                        "example": 2021
+                                                    },
+                                                    "license_plate": {
+                                                        "type": "string",
+                                                        "example": "0001PT02"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-06-12 12:00:00"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-06-12 12:00:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Добавить автомобиль",
+                "description": "Позволяет авторизованному водителю добавить свой автомобиль в систему. Номерной знак должен быть уникальным.",
+                "operationId": "addCar",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "brand",
+                                    "model",
+                                    "year",
+                                    "license_plate"
+                                ],
+                                "properties": {
+                                    "brand": {
+                                        "description": "Марка автомобиля",
+                                        "type": "string",
+                                        "example": "Hyundai"
+                                    },
+                                    "model": {
+                                        "description": "Модель автомобиля",
+                                        "type": "string",
+                                        "example": "Sonata"
+                                    },
+                                    "year": {
+                                        "description": "Год выпуска",
+                                        "type": "integer",
+                                        "example": 2021
+                                    },
+                                    "license_plate": {
+                                        "description": "Уникальный номерной знак",
+                                        "type": "string",
+                                        "example": "0001PT02"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Автомобиль успешно добавлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Автомобиль успешно добавлен"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "driver_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "brand": {
+                                                    "type": "string",
+                                                    "example": "Hyundai"
+                                                },
+                                                "model": {
+                                                    "type": "string",
+                                                    "example": "Sonata"
+                                                },
+                                                "year": {
+                                                    "type": "integer",
+                                                    "example": 2021
+                                                },
+                                                "license_plate": {
+                                                    "type": "string",
+                                                    "example": "0001PT02"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cars/{carId}": {
+            "put": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Обновить информацию об автомобиле",
+                "description": "Позволяет водителю обновить марку, модель, год выпуска или номерной знак своего автомобиля по его ID.",
+                "operationId": "updateCar",
+                "parameters": [
+                    {
+                        "name": "carId",
+                        "in": "path",
+                        "description": "ID автомобиля в базе данных",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "brand",
+                                    "model",
+                                    "year",
+                                    "license_plate"
+                                ],
+                                "properties": {
+                                    "brand": {
+                                        "type": "string",
+                                        "example": "Hyundai"
+                                    },
+                                    "model": {
+                                        "type": "string",
+                                        "example": "Sonata (Рестайлинг)"
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "example": 2022
+                                    },
+                                    "license_plate": {
+                                        "type": "string",
+                                        "example": "0001PT02"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Информация об автомобиле успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Информация об автомобиле успешно обновлена"
+                                        },
+                                        "data": {
+                                            "description": "Обновленные данные машины",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "404": {
+                        "description": "Автомобиль не найден у этого водителя"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Удалить автомобиль",
+                "description": "Удаляет выбранный автомобиль текущего водителя из системы.",
+                "operationId": "deleteCar",
+                "parameters": [
+                    {
+                        "name": "carId",
+                        "in": "path",
+                        "description": "ID автомобиля, который нужно удалить",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Автомобиль успешно удален",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Автомобиль успешно удален"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "404": {
+                        "description": "Автомобиль не найден"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trips/{trip}/reviews": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Получить отзывы к поездке",
+                "description": "Возвращает все отзывы, оставленные в рамках конкретной поездки.",
+                "operationId": "getTripReviews",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID поездки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "trip_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "user_id": {
+                                                        "description": "ID автора отзыва",
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "rating": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "comment": {
+                                                        "type": "string",
+                                                        "example": "Всё супер, доехали быстро"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Оставить отзыв о поездке",
+                "description": "Позволяет пассажиру или водителю выставить оценку от 1 до 5 и написать комментарий по завершении поездки.",
+                "operationId": "reviewTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID поездки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "rating",
+                                    "comment"
+                                ],
+                                "properties": {
+                                    "rating": {
+                                        "description": "Оценка от 1 до 5",
+                                        "type": "integer",
+                                        "maximum": 5,
+                                        "minimum": 1,
+                                        "example": 5
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "example": "Отличная поездка, водитель пунктуальный!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Отзыв успешно добавлен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "trip_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "rating": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "comment": {
+                                                    "type": "string",
+                                                    "example": "Отличная поездка, водитель пунктуальный!"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Нельзя оставить отзыв на незавершенную поездку"
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trips": {
+            "get": {
+                "tags": [
+                    "Trips - Passenger"
+                ],
+                "summary": "Пассажир: Просмотр истории своих поездок",
+                "description": "Возвращает пагинированный список всех поездок, созданных текущим авторизованным пассажиром.",
+                "operationId": "getPassengerTripsHistory",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице (по умолчанию 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос истории поездок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "passenger_id": {
+                                                        "description": "ID пассажира (users.id)",
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "driver_id": {
+                                                        "description": "ID водителя (users.id)",
+                                                        "type": "integer",
+                                                        "example": 3,
+                                                        "nullable": true
+                                                    },
+                                                    "car_id": {
+                                                        "description": "ID автомобиля (cars.id)",
+                                                        "type": "integer",
+                                                        "example": 1,
+                                                        "nullable": true
+                                                    },
+                                                    "origin": {
+                                                        "type": "string",
+                                                        "example": "Душанбе, ул. Рудаки 15"
+                                                    },
+                                                    "destination": {
+                                                        "type": "string",
+                                                        "example": "Худжанд, 19-й микрорайон"
+                                                    },
+                                                    "departure_time": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-06-15 14:00:00"
+                                                    },
+                                                    "preferences": {
+                                                        "type": "string",
+                                                        "example": "С кондиционером",
+                                                        "nullable": true
+                                                    },
+                                                    "status": {
+                                                        "description": "Текущий статус из TripStatus Enum",
+                                                        "type": "string",
+                                                        "example": "completed"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-06-12 12:00:00"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-06-12 12:45:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Trips - Passenger"
+                ],
+                "summary": "Пассажир: Создание поездки",
+                "description": "Позволяет авторизованному пассажиру создать новую заявку на поездку. По умолчанию выставляется статус PENDING.",
+                "operationId": "createTrip",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "origin",
+                                    "destination",
+                                    "departure_time"
+                                ],
+                                "properties": {
+                                    "origin": {
+                                        "description": "Место отправления",
+                                        "type": "string",
+                                        "example": "Душанбе, ул. Рудаки 15"
+                                    },
+                                    "destination": {
+                                        "description": "Место назначения",
+                                        "type": "string",
+                                        "example": "Худжанд, 19-й микрорайон"
+                                    },
+                                    "departure_time": {
+                                        "description": "Время отправления",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-15 14:00:00"
+                                    },
+                                    "preferences": {
+                                        "description": "Предпочтения пассажира",
+                                        "type": "string",
+                                        "example": "С кондиционером, без курящих",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Поездка успешно создана, ожидайте водителя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Поездка успешно создана, ожидайте водителя"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "passenger_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "driver_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "car_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "origin": {
+                                                    "type": "string",
+                                                    "example": "Душанбе, ул. Рудаки 15"
+                                                },
+                                                "destination": {
+                                                    "type": "string",
+                                                    "example": "Худжанд, 19-й микрорайон"
+                                                },
+                                                "departure_time": {
+                                                    "type": "string",
+                                                    "example": "2026-06-15 14:00:00"
+                                                },
+                                                "preferences": {
+                                                    "type": "string",
+                                                    "example": "С кондиционером, без курящих",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации входных данных"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trips/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "Trips - Passenger"
+                ],
+                "summary": "Пассажир: Отмена поездки",
+                "description": "Позволяет пассажиру отменить свою активную поездку. Статус изменяется на CANCELED.",
+                "operationId": "cancelTrip",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID поездки (trips.id)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Поездка успешно отменена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Поездка успешно отменена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "passenger_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "driver_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "car_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "origin": {
+                                                    "type": "string",
+                                                    "example": "Душанбе, ул. Рудаки 15"
+                                                },
+                                                "destination": {
+                                                    "type": "string",
+                                                    "example": "Худжанд, 19-й микрорайон"
+                                                },
+                                                "departure_time": {
+                                                    "type": "string",
+                                                    "example": "2026-06-15 14:00:00"
+                                                },
+                                                "preferences": {
+                                                    "type": "string",
+                                                    "example": "С кондиционером, без курящих",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "canceled"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:10:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Невозможно отменить поездку (например, она уже в пути или завершена)"
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/driver/trips/available": {
+            "get": {
+                "tags": [
+                    "Trips - Driver"
+                ],
+                "summary": "Водитель: Просмотр доступных поездок",
+                "description": "Возвращает список всех свободных поездок системы со статусом PENDING.",
+                "operationId": "getAvailableTrips",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Количество элементов на странице",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список свободных поездок успешно получен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "passenger_id": {
+                                                        "type": "integer",
+                                                        "example": 8
+                                                    },
+                                                    "driver_id": {
+                                                        "type": "integer",
+                                                        "example": null,
+                                                        "nullable": true
+                                                    },
+                                                    "car_id": {
+                                                        "type": "integer",
+                                                        "example": null,
+                                                        "nullable": true
+                                                    },
+                                                    "origin": {
+                                                        "type": "string",
+                                                        "example": "Канибадам, Центр"
+                                                    },
+                                                    "destination": {
+                                                        "type": "string",
+                                                        "example": "Худжанд, Шёлкокомбинат"
+                                                    },
+                                                    "departure_time": {
+                                                        "type": "string",
+                                                        "example": "2026-06-16 08:00:00"
+                                                    },
+                                                    "preferences": {
+                                                        "type": "string",
+                                                        "example": "Сзади пустой багажник для сумок",
+                                                        "nullable": true
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trips/{id}/accept": {
+            "post": {
+                "tags": [
+                    "Trips - Driver"
+                ],
+                "summary": "Водитель: Принять поездку",
+                "description": "Привязывает водителя (driver_id) и его автомобиль (car_id) к поездке. Статус меняется (например, на accepted / в пути).",
+                "operationId": "acceptTrip",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID поездки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "car_id"
+                                ],
+                                "properties": {
+                                    "car_id": {
+                                        "description": "ID автомобиля водителя из таблицы cars",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Вы успешно приняли заказ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Вы успешно приняли заказ"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "passenger_id": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                },
+                                                "driver_id": {
+                                                    "description": "ID текущего авторизованного водителя",
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "car_id": {
+                                                    "description": "ID выбранного автомобиля из запроса",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "origin": {
+                                                    "type": "string",
+                                                    "example": "Канибадам, Центр"
+                                                },
+                                                "destination": {
+                                                    "type": "string",
+                                                    "example": "Худжанд, Шёлкокомбинат"
+                                                },
+                                                "departure_time": {
+                                                    "type": "string",
+                                                    "example": "2026-06-16 08:00:00"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "accepted"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации (car_id не существует в таблице cars)"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trips/{id}/complete": {
+            "post": {
+                "tags": [
+                    "Trips - Driver"
+                ],
+                "summary": "Водитель: Завершить поездку",
+                "description": "Переводит статус поездки в COMPLETED по завершении маршрута.",
+                "operationId": "completeTrip",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID поездки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Поездка успешно завершена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Поездка успешно завершена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "completed"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Невозможно завершить поездку (например, она не была принята или уже отменена)"
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Введите ваш API токен в формате: Bearer {token}",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Cars",
+            "description": "Cars"
+        },
+        {
+            "name": "Reviews",
+            "description": "Reviews"
+        },
+        {
+            "name": "Trips - Passenger",
+            "description": "Trips - Passenger"
+        },
+        {
+            "name": "Trips - Driver",
+            "description": "Trips - Driver"
+        }
+    ]
+}
