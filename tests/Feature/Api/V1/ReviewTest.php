@@ -37,6 +37,6 @@ class ReviewTest extends TestCase
             ]);
 
         // Сервис должен отработать и выдать 400, так как статус поездки IN_PROGRESS
-        $response->assertStatus(400);
+        $response->assertStatus(403);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Enums\TripStatus;
 use App\Models\Review;
+use App\Models\Trip;
 use App\Repositories\ReviewRepository;
 use App\Repositories\Contracts\TripRepositoryInterface;
 
@@ -15,42 +15,21 @@ class ReviewService
     ) {}
 
     /**
-     * Создать отзыв после завершения поездки
+     * Создать отзыв после завершения поездки (Вызывается только для пассажиров)
      */
-    public function createReview(array $data, int $tripId): Review
+    public function createReview(int $passengerId, Trip $trip, array $data): Review
     {
-        // Вытаскиваем ID авторизованного пассажира напрямую из хелпера Laravel
-        $passengerId = auth()->id();
+        // Проверки существования поездки, роли пассажира, статуса COMPLETED 
+        // и дубликатов отзывов полностью ушли в ReviewPolicy и Route Model Binding.
 
-        $trip = $this->tripRepository->findById($tripId);
-
-        // 1. Проверяем существование поездки и роль участника
-        if (!$trip || $trip->passenger_id !== $passengerId) {
-            abort(403, 'Вы не можете оставить отзыв к этой поездке.');
-        }
-
-        // 2. Проверяем, что поездка завершена
-        if ($trip->status !== TripStatus::COMPLETED) {
-            abort(400, 'Нельзя оставить отзыв к незавершенной поездке.');
-        }
-
-        // 3. Проверяем, есть ли у поездки водитель
+        // Бизнес-проверка: на случай форс-мажора, если у завершенной поездки почему-то нет водителя
         if (!$trip->driver_id) {
             abort(400, 'У этой поездки не было водителя.');
         }
 
-        // 4. Проверяем, не оставлял ли пассажир отзыв на эту поездку ранее
-        $alreadyReviewed = Review::where('trip_id', $tripId)
-            ->where('reviewer_id', $passengerId)
-            ->exists();
-
-        if ($alreadyReviewed) {
-            abort(400, 'Вы уже оставили отзыв для этой поездки.');
-        }
-
-        // Формируем данные для записи
+        // Формируем данные для записи (используем твои оригинальные reviewer/reviewee поля)
         $reviewData = [
-            'trip_id'     => $tripId,
+            'trip_id'     => $trip->id,
             'reviewer_id' => $passengerId,
             'reviewee_id' => $trip->driver_id, // Отзыв пишется водителю
             'rating'      => $data['rating'],

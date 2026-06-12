@@ -1,66 +1,230 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# RideTech API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+RESTful API для сервиса райдшеринга, разработанный на Laravel.
 
-## About Laravel
+## Описание
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+RideTech API позволяет пользователям регистрироваться в системе в роли пассажира или водителя, создавать и управлять поездками, добавлять транспортные средства, а также оставлять отзывы о водителях.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Проект разработан в соответствии с принципами SOLID, MVC и best practices Laravel.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Технологии
 
-## Learning Laravel
+* PHP 8+
+* Laravel 10
+* MySQL / PostgreSQL
+* Laravel Sanctum
+* Eloquent ORM
+* Swagger / Postman
+* PHPUnit
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Возможности
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Аутентификация
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* Регистрация пользователя
+* Авторизация пользователя
+* Выход из системы (отзыв токена)
 
-## Laravel Sponsors
+### Управление поездками
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Пассажир
 
-### Premium Partners
+* Создание поездки
+* Просмотр истории поездок
+* Просмотр деталей поездки
+* Обновление поездки
+* Отмена поездки
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+#### Водитель
 
-## Contributing
+* Просмотр доступных поездок
+* Принятие поездки
+* Отклонение поездки
+* Завершение поездки
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Управление автомобилями
 
-## Code of Conduct
+* Добавление автомобиля
+* Просмотр списка автомобилей
+* Обновление автомобиля
+* Удаление автомобиля
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Отзывы и рейтинг
 
-## Security Vulnerabilities
+* Оставление отзыва водителю
+* Просмотр отзывов водителя
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Дополнительно
 
-## License
+* Пагинация
+* Фильтрация поездок
+* Feature-тесты
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Архитектура проекта
+
+```text
+app
+├── Http
+│   ├── Controllers
+│   ├── Requests
+│   └── Resources
+├── Models
+├── Services
+├── Repositories
+├── Policies
+├── Filters
+└── Enums
+```
+
+## Установка проекта
+
+### Клонирование репозитория
+
+```bash
+git clone https://github.com/your-username/ridetech-api.git
+
+cd ridetech-api
+```
+
+### Настройка окружения
+
+```bash
+cp .env.example .env
+```
+
+Настройте параметры подключения к базе данных при необходимости.
+
+### Запуск контейнеров
+
+```bash
+./vendor/bin/sail up -d
+```
+
+### Установка зависимостей
+
+```bash
+./vendor/bin/sail composer install
+```
+
+### Генерация ключа приложения
+
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+### Выполнение миграций
+
+```bash
+./vendor/bin/sail artisan migrate
+```
+
+
+### Проверка работы приложения
+
+API будет доступно по адресу:
+
+```text
+http://localhost
+```
+
+Swagger документация:
+
+```text
+http://localhost/api/documentation
+```
+
+### Запуск тестов
+
+```bash
+./vendor/bin/sail artisan test
+```
+
+## Аутентификация
+
+Для доступа к защищенным маршрутам используется Laravel Sanctum.
+
+После успешного входа необходимо передавать токен в заголовке:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint         | Description |
+| ------ | ---------------- | ----------- |
+| POST   | /api/v1/register | Регистрация |
+| POST   | /api/v1/login    | Авторизация |
+| POST   | /api/v1/logout   | Выход       |
+
+### Trips
+
+| Method | Endpoint           | Description      |
+| ------ | ------------------ | ---------------- |
+| POST   | /api/v1/trips      | Создать поездку  |
+| GET    | /api/v1/trips      | Список поездок   |
+| GET    | /api/v1/trips/{id} | Детали поездки   |
+| PUT    | /api/v1/trips/{id} | Обновить поездку |
+| DELETE | /api/v1/trips/{id} | Отменить поездку |
+
+### Cars
+
+| Method | Endpoint          | Description         |
+| ------ | ----------------- | ------------------- |
+| POST   | /api/v1/cars      | Добавить автомобиль |
+| GET    | /api/v1/cars      | Список автомобилей  |
+| PUT    | /api/v1/cars/{id} | Обновить автомобиль |
+| DELETE | /api/v1/cars/{id} | Удалить автомобиль  |
+
+### Reviews
+
+| Method | Endpoint                    | Description     |
+| ------ | --------------------------- | --------------- |
+| POST   | /api/v1/reviews/{driver_id} | Оставить отзыв  |
+| GET    | /api/v1/reviews/{driver_id} | Получить отзывы |
+
+## Тестирование
+
+Запуск тестов:
+
+```bash
+php artisan test
+```
+
+или
+
+```bash
+vendor/bin/phpunit
+```
+
+## Документация API
+
+Swagger:
+
+```text
+http://127.0.0.1:8000/api/documentation
+```
+
+или
+
+Postman Collection:
+
+```text
+docs/RideTech.postman_collection.json
+```
+
+## Безопасность
+
+* Laravel Sanctum
+* Form Requests Validation
+* Policies
+* Защита от массового присвоения (Mass Assignment)
+* Защита от SQL-инъекций через Eloquent ORM
+* Rate Limiting
+
+## Автор
+
+Тестовое задание RideTech API.

@@ -32,30 +32,20 @@ class CarService
 
 
     /**
-     * Обновить информацию об автомобиле
-     */
-    public function updateCar(int $driverId, int $carId, array $data): Car
+    * Обновить информацию об автомобиле
+    */
+    public function updateCar(\App\Models\Car $car, array $data): \App\Models\Car
     {
-        $car = $this->carRepository->findById($carId);
-
-        if (!$car || $car->driver_id !== $driverId) {
-            abort(403, 'Вы не являетесь владельцем этого транспортного средства.');
-        }
-
+        // Никаких проверок прав и findById! Только обновление данных через репозиторий
         return $this->carRepository->update($car, $data);
     }
 
     /**
      * Удалить автомобиль
-     */
-    public function deleteCar(int $driverId, int $carId): void
+    */
+    public function deleteCar(\App\Models\Car $car): bool
     {
-        $car = $this->carRepository->findById($carId);
-
-        if (!$car || $car->driver_id !== $driverId) {
-            abort(403, 'Вы не являетесь владельцем этого транспортного средства.');
-        }
-
-        $this->carRepository->delete($car);
+        // Никаких проверок прав и findById! Только удаление через репозиторий
+        return $this->carRepository->delete($car);
     }
 }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\V1\Trip;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Trip\CreateTripRequest;
+use App\Models\Trip;
 use App\Services\TripService;
+use App\Enums\TripStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,6 +21,7 @@ class TripController extends Controller
      */
     public function store(CreateTripRequest $request): JsonResponse
     {
+        // Для создания объекта политика обычно не нужна, либо проверяется роль (например, что это Passenger)
         $trip = $this->tripService->createTrip(
             $request->user()->id,
             $request->validated()
@@ -34,14 +37,17 @@ class TripController extends Controller
     /**
      * Пассажир: Отмена поездки
      */
-    public function cancel(Request $request, int $id): JsonResponse
+    public function cancel(Trip $trip): JsonResponse
     {
-        $trip = $this->tripService->cancelTrip($request->user()->id, $id);
+        // Вызываем TripPolicy->cancel($user, $trip)
+        $this->authorize('cancel', $trip);
+
+        $updatedTrip = $this->tripService->cancelTrip($trip);
 
         return response()->json([
             'success' => true,
             'message' => 'Поездка успешно отменена',
-            'data' => $trip
+            'data' => $updatedTrip
         ], 200);
     }
 
@@ -50,9 +56,7 @@ class TripController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        // Принудительно фильтруем только по текущему пользователю-пассажиру
         $filters = ['passenger_id' => $request->user()->id];
-        
         $trips = $this->tripService->getTripsList($filters, $request->get('per_page', 10));
 
         return response()->json([
@@ -61,15 +65,12 @@ class TripController extends Controller
         ], 200);
     }
 
-
     /**
      * Водитель: Просмотр доступных поездок (статус "ожидает водителя")
      */
     public function available(Request $request): JsonResponse
     {
-        // Фильтруем строго по статусу PENDING (ожидание)
-        $filters = ['status' => \App\Enums\TripStatus::PENDING->value];
-        
+        $filters = ['status' => TripStatus::PENDING->value];
         $trips = $this->tripService->getTripsList($filters, $request->get('per_page', 10));
 
         return response()->json([
@@ -81,37 +82,42 @@ class TripController extends Controller
     /**
      * Водитель: Принять поездку
      */
-    public function accept(Request $request, int $id): JsonResponse
+    public function accept(Request $request, Trip $trip): JsonResponse
     {
-        // Для MVP передаем car_id прямо в запросе, либо можно автоматом брать первую машину водителя
+        // Сначала базовая проверка политики: может ли этот юзер вообще принимать эту поездку?
+        $this->authorize('accept', $trip);
+
         $request->validate([
             'car_id' => ['required', 'integer', 'exists:cars,id']
         ]);
 
-        $trip = $this->tripService->acceptTrip(
+        $updatedTrip = $this->tripService->acceptTrip(
             $request->user()->id,
-            $id,
+            $trip,
             $request->input('car_id')
         );
 
         return response()->json([
             'success' => true,
             'message' => 'Вы успешно приняли заказ',
-            'data' => $trip
+            'data' => $updatedTrip
         ], 200);
     }
 
     /**
      * Водитель: Завершить поездку
      */
-    public function complete(Request $request, int $id): JsonResponse
+    public function complete(Trip $trip): JsonResponse
     {
-        $trip = $this->tripService->completeTrip($request->user()->id, $id);
+        // Вызываем TripPolicy->complete($user, $trip)
+        $this->authorize('complete', $trip);
+
+        $updatedTrip = $this->tripService->completeTrip($trip);
 
         return response()->json([
             'success' => true,
             'message' => 'Поездка успешно завершена',
-            'data' => $trip
+            'data' => $updatedTrip
         ], 200);
     }
 }
