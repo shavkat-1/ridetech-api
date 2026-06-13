@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'phone' => '+992' . $this->faker->numerify('#########'), // Генерирует +992 и 9 случайных цифр
         ];
     }
 

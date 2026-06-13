@@ -20,7 +20,7 @@ class ReviewController extends Controller
     public function store(ReviewRequest $request, Trip $trip): JsonResponse
     {
         // Вызывает ReviewPolicy@create
-        $this->authorize('create', $trip);
+        $this->authorize('addReview', $trip);
 
         $result = $this->reviewService->createReview(
             $request->user()->id,
@@ -38,17 +38,25 @@ class ReviewController extends Controller
     }
 
     /**
-     * Получить список отзывов конкретного водителя
+     * Получить список отзывов конкретного водителя (с пагинацией)
      */
-    public function index(int $driverId): JsonResponse
+    public function index(Trip $trip): JsonResponse
     {
-        $reviews = $this->reviewService->getReviewsForDriver($driverId);
+        // Бизнес-чек: если у поездки нет водителя, сразу возвращаем ошибку
+        if (!$trip->driver_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'У этой поездки не найден ID водителя.'
+            ], 400);
+        }
+
+        // Передаем управление в сервис, запрашивая пагинацию по 10 отзывов
+        $reviews = $this->reviewService->getReviewsForDriver($trip->driver_id, 10);
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'reviews' => $reviews,
-            ]
+            // Laravel автоматически развернет LengthAwarePaginator в JSON вместе с мета-данными пагинации
+            'data' => $reviews 
         ]);
-    }
+    } // Скобка была пропущена, теперь всё на месте
 }

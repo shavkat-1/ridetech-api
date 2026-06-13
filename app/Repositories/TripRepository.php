@@ -25,33 +25,34 @@ class TripRepository implements TripRepositoryInterface
     }
 
     /**
-     * Получить отфильтрованные поездки с пагинацией
+      * Получить отфильтрованные и пагинированные поездки из БД
      */
     public function getFilteredTrips(array $filters, int $perPage = 10): LengthAwarePaginator
     {
-        $query = Trip::query()->with(['passenger', 'driver', 'car']);
+        $query = Trip::query();
 
-        // Фильтр по статусу
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
-        // Фильтр по пассажиру
+        // Фильтр по пассажиру (всегда активен для этого эндпоинта)
         if (!empty($filters['passenger_id'])) {
             $query->where('passenger_id', $filters['passenger_id']);
         }
 
-        // Фильтр по водителю
-        if (!empty($filters['driver_id'])) {
-            $query->where('driver_id', $filters['driver_id']);
+        // Динамический фильтр по статусу (Enum или строка)
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
         }
 
-        // Фильтр по конкретной дате отправления (Y-m-d)
+        // Динамический фильтр по дате (игнорируем время, смотрим только день)
         if (!empty($filters['date'])) {
             $query->whereDate('departure_time', $filters['date']);
         }
 
-        // Свежие поездки первыми
-        return $query->latest()->paginate($perPage);
+        // Динамический фильтр по водителю
+        if (!empty($filters['driver_id'])) {
+            $query->where('driver_id', $filters['driver_id']);
+        }
+
+        // Свежие поездки вверху, подтягиваем связанные машины, если нужно
+        return $query->with(['car'])->latest()->paginate($perPage);
     }
+
 }

@@ -11,51 +11,47 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
 
-// Группируем роуты версии V1
+// Группируем все роуты под префиксом v1
 Route::prefix('v1')->group(function () {
     
-    // Публичные роуты аутентификации
-    Route::prefix('auth')->group(function () {
-        Route::post('/register', [AuthController::class, 'register']);
-        Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-    });
+    // ----------------------------------------------------
+    // Публичные роуты (Доступны без токена)
+    // ----------------------------------------------------
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 
-    // Защищенные роуты (доступны только по Sanctum токену)
+    // ----------------------------------------------------
+    // Защищенные роуты (Доступны только по Sanctum токену)
+    // ----------------------------------------------------
     Route::middleware('auth:sanctum')->group(function () {
+
+        // Сессия и профиль
+        Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
     
-        // Роуты управления машинами для водителя
-        Route::post('/cars', [CarController::class, 'store']);     // Добавить машину
-        Route::get('/cars', [CarController::class, 'index']);      // Получить свои машины
-        Route::put('/cars/{carId}', [CarController::class, 'update']); // Обновить машину
-        Route::delete('/cars/{carId}', [CarController::class, 'destroy']); // Удалить машину
+        // Управление машинами (Водитель)
+        Route::post('/cars', [CarController::class, 'store']);       // Добавить
+        Route::get('/cars', [CarController::class, 'index']);         // Список
+        Route::put('/cars/{car}', [CarController::class, 'update']);  // Обновить
+        Route::delete('/cars/{car}', [CarController::class, 'destroy']); // Удалить
 
-        // Роуты поездок для пассажира
-        Route::post('/trips', [TripController::class, 'store']);          // Создать поездку
-        Route::post('/trips/{id}/cancel', [TripController::class, 'cancel']); // Отменить поездку
-        Route::get('/trips', [TripController::class, 'index']);           // История поездок пассажира
+        // Поездки (Пассажир)
+        Route::post('/trips', [TripController::class, 'store']);
+        Route::post('/trips/{trip}/cancel', [TripController::class, 'cancel']);
+        Route::get('/trips', [TripController::class, 'index']);
 
+        // Поездки (Водитель)
+        Route::get('driver/trips/available', [TripController::class, 'available']);
+        Route::post('/trips/{trip}/accept', [TripController::class, 'accept']);
+        Route::post('/trips/{trip}/complete', [TripController::class, 'complete']);
 
-        // Роуты поездок для водителя
-        Route::get('/driver/trips/available', [TripController::class, 'available']); // Список свободных заказов
-        Route::post('/trips/{id}/accept', [TripController::class, 'accept']);        // Принять заказ
-        Route::post('/trips/{id}/complete', [TripController::class, 'complete']);    // Завершить заказ
-
-
-        //Отзывы
-        Route::post('/trips/{tripId}/reviews', [ReviewController::class, 'store']); // Оставить отзыв после поездки
-        Route::get('/reviews/{driverId}', [ReviewController::class, 'index']); // Получить список отзывов конкретного водителя
-
+        // Отзывы
+        Route::post('/trips/{trip}/reviews', [ReviewController::class, 'store']);
+        Route::get('/trips/{trip}/reviews', [ReviewController::class, 'index']);
+        Route::get('/reviews/{user}', [ReviewController::class, 'index']);
+    });
 });
-});
-

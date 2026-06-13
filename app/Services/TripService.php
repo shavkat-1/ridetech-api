@@ -29,6 +29,7 @@ class TripService
      */
     public function getTripsList(array $filters, int $perPage = 10): LengthAwarePaginator
     {
+        // Делегируем тяжелую работу с базой данных репозиторию
         return $this->tripRepository->getFilteredTrips($filters, $perPage);
     }
 

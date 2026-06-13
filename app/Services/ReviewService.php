@@ -6,6 +6,7 @@ use App\Models\Review;
 use App\Models\Trip;
 use App\Repositories\ReviewRepository;
 use App\Repositories\Contracts\TripRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ReviewService
 {
@@ -40,10 +41,26 @@ class ReviewService
     }
 
     /**
-     * Получить список отзывов конкретного водителя
+     * Получить пагинированный список отзывов конкретного водителя
      */
-    public function getReviewsForDriver(int $driverId)
+    public function getReviewsForDriver(int $driverId, int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->reviewRepository->getReviewsForUser($driverId);
+        // Строго проверяем, чтобы здесь было 'reviewee_id'
+        return \App\Models\Review::where('reviewee_id', $driverId) 
+            ->with('reviewer:id,name') 
+            ->latest()
+            ->paginate($perPage);
     }
+
+    /**
+     * Получить отзывы для конкретной поездки
+     */
+    public function getReviewsForTrip(Trip $trip)
+    {
+        // Запрашиваем через репозиторий или напрямую у модели Review, 
+        // подтягивая данные того, кто оставил отзыв (reviewer)
+        return Review::where('trip_id', $trip->id)
+            ->with('reviewer:id,name') 
+            ->get();
+}
 }

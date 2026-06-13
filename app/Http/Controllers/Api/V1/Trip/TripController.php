@@ -52,19 +52,25 @@ class TripController extends Controller
     }
 
     /**
-     * Пассажир: Просмотр истории своих поездок
+     * Пассажир: Просмотр истории своих поездок с фильтрацией и пагинацией
      */
     public function index(Request $request): JsonResponse
     {
-        $filters = ['passenger_id' => $request->user()->id];
-        $trips = $this->tripService->getTripsList($filters, $request->get('per_page', 10));
+        // Собираем разрешенные фильтры из запроса
+        $filters = $request->only(['status', 'date', 'driver_id']);
+    
+        // Безопасность: принудительно ограничиваем выборку текущим пассажиром
+        $filters['passenger_id'] = $request->user()->id;
+
+        // Передаем фильтры и per_page в сервис
+        $perPage = $request->integer('per_page', 10);
+        $trips = $this->tripService->getTripsList($filters, $perPage);
 
         return response()->json([
             'success' => true,
             'data' => $trips
         ], 200);
-    }
-
+}
     /**
      * Водитель: Просмотр доступных поездок (статус "ожидает водителя")
      */

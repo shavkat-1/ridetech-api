@@ -14,6 +14,7 @@ class ReviewRequest extends FormRequest
         return true;
     }
 
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,7 +23,6 @@ class ReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'trip_id' => ['required', 'integer', 'exists:trips,id'],
             'rating' => ['required', 'integer', 'between:1,5'],
             'comment' => ['nullable', 'string', 'max:1000'],
         ];
