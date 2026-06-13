@@ -16,7 +16,7 @@ class AuthTest extends TestCase
      */
     public function test_user_can_register_successfully(): void
     {
-        $response = $this->postJson('/api/v1/auth/register', [
+        $response = $this->postJson('/api/v1/register', [
             'name' => 'Шавкат',
             'email' => 'shavkat@example.com',
             'phone' => '+992920000000',
@@ -49,7 +49,7 @@ class AuthTest extends TestCase
             'role' => 'driver'
         ]);
 
-        $response = $this->postJson('/api/v1/auth/login', [
+        $response = $this->postJson('/api/v1/login', [
             'email' => 'alisher@example.com',
             'password' => 'password123',
         ]);
