@@ -124,15 +124,15 @@ cp .env.example .env
 
 API будет доступно по адресу:
 
-```text
+
 http://localhost
-```
+
 
 Swagger документация:
 
-```text
+
 http://localhost/api/documentation
-```
+
 
 ### Запуск тестов
 
@@ -160,15 +160,22 @@ Authorization: Bearer YOUR_TOKEN
 | POST   | /api/v1/login    | Авторизация |
 | POST   | /api/v1/logout   | Выход       |
 
-### Trips
+### Trips for Passengers
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | /api/v1/trips | Создать поездку |
+| GET | /api/v1/trips | Список поездок |
+| GET | /api/v1/trips/{id} | Детали поездки |
+| PUT | /api/v1/trips/{id} | Обновить поездку |
+| POST | /api/v1/trips/{id}/cancel | Отменить поездку (только статус PENDING) |
 
-| Method | Endpoint           | Description      |
-| ------ | ------------------ | ---------------- |
-| POST   | /api/v1/trips      | Создать поездку  |
-| GET    | /api/v1/trips      | Список поездок   |
-| GET    | /api/v1/trips/{id} | Детали поездки   |
-| PUT    | /api/v1/trips/{id} | Обновить поездку |
-| DELETE | /api/v1/trips/{id} | Отменить поездку |
+### Trips for Drivers
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | /api/v1/driver/trips/available | Список доступных поездок |
+| POST | /api/v1/trips/{id}/accept | Принять поездку |
+| POST | /api/v1/trips/{id}/complete | Завершить поездку |
+
 
 ### Cars
 
@@ -186,35 +193,7 @@ Authorization: Bearer YOUR_TOKEN
 | POST   | /api/v1/reviews/{driver_id} | Оставить отзыв  |
 | GET    | /api/v1/reviews/{driver_id} | Получить отзывы |
 
-## Тестирование
 
-Запуск тестов:
-
-```bash
-php artisan test
-```
-
-или
-
-```bash
-vendor/bin/phpunit
-```
-
-## Документация API
-
-Swagger:
-
-```text
-http://127.0.0.1:8000/api/documentation
-```
-
-или
-
-Postman Collection:
-
-```text
-docs/RideTech.postman_collection.json
-```
 
 ## Безопасность
 
