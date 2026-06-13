@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Review\ReviewRequest;
 use App\Models\Trip;
+use App\Models\User;
 use App\Services\ReviewService;
 use Illuminate\Http\JsonResponse;
 
@@ -38,25 +39,28 @@ class ReviewController extends Controller
     }
 
     /**
-     * Получить список отзывов конкретного водителя (с пагинацией)
+     * Получить список отзывов, оставленных в рамках конкретной поездки
      */
-    public function index(Trip $trip): JsonResponse
+    public function tripReviews(Trip $trip): JsonResponse
     {
-        // Бизнес-чек: если у поездки нет водителя, сразу возвращаем ошибку
-        if (!$trip->driver_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'У этой поездки не найден ID водителя.'
-            ], 400);
-        }
-
-        // Передаем управление в сервис, запрашивая пагинацию по 10 отзывов
-        $reviews = $this->reviewService->getReviewsForDriver($trip->driver_id, 10);
+        $reviews = $this->reviewService->getReviewsForTrip($trip);
 
         return response()->json([
             'success' => true,
-            // Laravel автоматически развернет LengthAwarePaginator в JSON вместе с мета-данными пагинации
-            'data' => $reviews 
+            'data' => $reviews,
         ]);
-    } // Скобка была пропущена, теперь всё на месте
+    }
+
+    /**
+     * Получить список отзывов конкретного водителя (с пагинацией)
+     */
+    public function driverReviews(User $user): JsonResponse
+    {
+        $reviews = $this->reviewService->getReviewsForDriver($user->id, 10);
+
+        return response()->json([
+            'success' => true,
+            'data' => $reviews
+        ]);
+    }
 }

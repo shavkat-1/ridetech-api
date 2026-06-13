@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Trip;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Trip\CreateTripRequest;
+use App\Http\Requests\Api\V1\Trip\UpdateTripRequest;
 use App\Models\Trip;
 use App\Services\TripService;
 use App\Enums\TripStatus;
@@ -32,6 +33,35 @@ class TripController extends Controller
             'message' => 'Поездка успешно создана, ожидайте водителя',
             'data' => $trip
         ], 201);
+    }
+
+    /**
+     * Просмотр деталей конкретной поездки
+     */
+    public function show(Trip $trip): JsonResponse
+    {
+        $this->authorize('view', $trip);
+
+        return response()->json([
+            'success' => true,
+            'data' => $trip
+        ], 200);
+    }
+
+    /**
+     * Пассажир: Обновление поездки (только пока статус pending)
+     */
+    public function update(UpdateTripRequest $request, Trip $trip): JsonResponse
+    {
+        $this->authorize('update', $trip);
+
+        $updatedTrip = $this->tripService->updateTrip($trip, $request->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Поездка успешно обновлена',
+            'data' => $updatedTrip
+        ], 200);
     }
 
     /**

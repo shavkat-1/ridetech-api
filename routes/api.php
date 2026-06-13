@@ -39,19 +39,20 @@ Route::prefix('v1')->group(function () {
         Route::put('/cars/{car}', [CarController::class, 'update']);  // Обновить
         Route::delete('/cars/{car}', [CarController::class, 'destroy']); // Удалить
 
-        // Поездки (Пассажир)
+        /// Поездки (Пассажир)
         Route::post('/trips', [TripController::class, 'store']);
-        Route::post('/trips/{trip}/cancel', [TripController::class, 'cancel']);
         Route::get('/trips', [TripController::class, 'index']);
+        Route::get('/trips/{trip}', [TripController::class, 'show']);
+        Route::put('/trips/{trip}', [TripController::class, 'update']);
+        Route::post('/trips/{trip}/cancel', [TripController::class, 'cancel']);
 
         // Поездки (Водитель)
         Route::get('driver/trips/available', [TripController::class, 'available']);
         Route::post('/trips/{trip}/accept', [TripController::class, 'accept']);
         Route::post('/trips/{trip}/complete', [TripController::class, 'complete']);
 
-        // Отзывы
         Route::post('/trips/{trip}/reviews', [ReviewController::class, 'store']);
-        Route::get('/trips/{trip}/reviews', [ReviewController::class, 'index']);
-        Route::get('/reviews/{user}', [ReviewController::class, 'index']);
+        Route::get('/trips/{trip}/reviews', [ReviewController::class, 'tripReviews']);
+        Route::get('/reviews/{user}', [ReviewController::class, 'driverReviews']);
     });
 });

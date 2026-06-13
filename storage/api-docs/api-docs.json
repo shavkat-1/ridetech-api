@@ -514,7 +514,7 @@
                 "tags": [
                     "Reviews"
                 ],
-                "summary": "Получить отзывы к поездке",
+                "summary": "Список отзывов по поездке",
                 "description": "Возвращает все отзывы, оставленные в рамках конкретной поездки.",
                 "operationId": "getTripReviews",
                 "parameters": [
@@ -707,6 +707,43 @@
                             "type": "integer",
                             "example": 10
                         }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Фильтр по статусу поездки",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "in_progress",
+                                "completed",
+                                "cancelled"
+                            ],
+                            "example": "completed"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Фильтр по дате отправления (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-06-15"
+                        }
+                    },
+                    {
+                        "name": "driver_id",
+                        "in": "query",
+                        "description": "Фильтр по ID водителя",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
                     }
                 ],
                 "responses": {
@@ -755,7 +792,6 @@
                                                     },
                                                     "departure_time": {
                                                         "type": "string",
-                                                        "format": "date-time",
                                                         "example": "2026-06-15 14:00:00"
                                                     },
                                                     "preferences": {
@@ -827,9 +863,8 @@
                                         "example": "Худжанд, 19-й микрорайон"
                                     },
                                     "departure_time": {
-                                        "description": "Время отправления",
+                                        "description": "Время отправления в формате Y-m-d H:i:s",
                                         "type": "string",
-                                        "format": "date-time",
                                         "example": "2026-06-15 14:00:00"
                                     },
                                     "preferences": {
@@ -933,13 +968,266 @@
                 ]
             }
         },
+        "/trips/{id}": {
+            "get": {
+                "tags": [
+                    "Trips - Passenger"
+                ],
+                "summary": "Просмотр деталей поездки",
+                "description": "Возвращает детали конкретной поездки. Доступно пассажиру-владельцу, назначенному водителю, либо любому водителю, если поездка еще свободна (pending).",
+                "operationId": "getTripDetails",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID поездки (trips.id)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Детали поездки успешно получены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "passenger_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "driver_id": {
+                                                    "type": "integer",
+                                                    "example": 3,
+                                                    "nullable": true
+                                                },
+                                                "car_id": {
+                                                    "type": "integer",
+                                                    "example": 1,
+                                                    "nullable": true
+                                                },
+                                                "origin": {
+                                                    "type": "string",
+                                                    "example": "Душанбе, ул. Рудаки 15"
+                                                },
+                                                "destination": {
+                                                    "type": "string",
+                                                    "example": "Худжанд, 19-й микрорайон"
+                                                },
+                                                "departure_time": {
+                                                    "type": "string",
+                                                    "example": "2026-06-15 14:00:00"
+                                                },
+                                                "preferences": {
+                                                    "type": "string",
+                                                    "example": "С кондиционером, без курящих",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:45:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "403": {
+                        "description": "Нет доступа к этой поездке"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Trips - Passenger"
+                ],
+                "summary": "Пассажир: Обновление поездки",
+                "description": "Позволяет пассажиру-владельцу обновить детали своей поездки (адрес, время, предпочтения), если она еще не была принята водителем (статус PENDING). Все поля опциональны.",
+                "operationId": "updateTrip",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID поездки (trips.id)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "origin": {
+                                        "type": "string",
+                                        "example": "Душанбе, ул. Рудаки 15"
+                                    },
+                                    "destination": {
+                                        "type": "string",
+                                        "example": "Худжанд, 19-й микрорайон"
+                                    },
+                                    "departure_time": {
+                                        "type": "string",
+                                        "example": "2026-06-15 15:00:00"
+                                    },
+                                    "preferences": {
+                                        "type": "string",
+                                        "example": "С кондиционером, без курящих",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Поездка успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Поездка успешно обновлена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "passenger_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "driver_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "car_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "origin": {
+                                                    "type": "string",
+                                                    "example": "Душанбе, ул. Рудаки 15"
+                                                },
+                                                "destination": {
+                                                    "type": "string",
+                                                    "example": "Худжанд, 19-й микрорайон"
+                                                },
+                                                "departure_time": {
+                                                    "type": "string",
+                                                    "example": "2026-06-15 15:00:00"
+                                                },
+                                                "preferences": {
+                                                    "type": "string",
+                                                    "example": "С кондиционером, без курящих",
+                                                    "nullable": true
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "pending"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-12 15:45:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Поездку нельзя изменить (уже принята водителем или завершена)"
+                    },
+                    "401": {
+                        "description": "Неавторизован"
+                    },
+                    "403": {
+                        "description": "Нет доступа к редактированию этой поездки"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/trips/{id}/cancel": {
             "post": {
                 "tags": [
                     "Trips - Passenger"
                 ],
                 "summary": "Пассажир: Отмена поездки",
-                "description": "Позволяет пассажиру отменить свою активную поездку. Статус изменяется на CANCELED.",
+                "description": "Позволяет пассажиру отменить свою активную поездку. Статус изменяется на CANCELLED.",
                 "operationId": "cancelTrip",
                 "parameters": [
                     {
@@ -1007,7 +1295,7 @@
                                                 },
                                                 "status": {
                                                     "type": "string",
-                                                    "example": "canceled"
+                                                    "example": "cancelled"
                                                 },
                                                 "created_at": {
                                                     "type": "string",
@@ -1050,8 +1338,8 @@
                 "tags": [
                     "Trips - Driver"
                 ],
-                "summary": "Водитель: Просмотр доступных поездок",
-                "description": "Возвращает список всех свободных поездок системы со статусом PENDING.",
+                "summary": "Водитель: Просмотр доступных заявок на поездки",
+                "description": "Возвращает список всех свободных заявок на поездки системы со статусом PENDING.",
                 "operationId": "getAvailableTrips",
                 "parameters": [
                     {
@@ -1067,7 +1355,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Список свободных поездок успешно получен",
+                        "description": "Список свободных заявок успешно получен",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1146,7 +1434,7 @@
                     "Trips - Driver"
                 ],
                 "summary": "Водитель: Принять поездку",
-                "description": "Привязывает водителя (driver_id) и его автомобиль (car_id) к поездке. Статус меняется (например, на accepted / в пути).",
+                "description": "Привязывает водителя (driver_id) и его автомобиль (car_id) к поездке. Статус меняется на IN_PROGRESS.",
                 "operationId": "acceptTrip",
                 "parameters": [
                     {
@@ -1228,8 +1516,9 @@
                                                     "example": "2026-06-16 08:00:00"
                                                 },
                                                 "status": {
+                                                    "description": "Статус меняется на in_progress",
                                                     "type": "string",
-                                                    "example": "accepted"
+                                                    "example": "in_progress"
                                                 }
                                             },
                                             "type": "object"

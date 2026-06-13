@@ -22,7 +22,7 @@ class UpdateCarRequest extends FormRequest
      */
     public function rules(): array
     {
-        $carId = $this->route('carId'); // Получаем ID машины из маршрута
+        $carId = $this->route('car'); // Получаем ID машины из маршрута
 
         return [
             'brand' => ['sometimes', 'string', 'max:255'],

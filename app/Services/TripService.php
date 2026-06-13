@@ -34,6 +34,18 @@ class TripService
     }
 
     /**
+     * Обновить детали поездки (только пассажир, только пока pending)
+     */
+    public function updateTrip(Trip $trip, array $data): Trip
+    {
+        if ($trip->status !== TripStatus::PENDING) {
+            abort(400, 'Нельзя изменить поездку, которая уже принята водителем или завершена.');
+        }
+
+        return $this->tripRepository->update($trip, $data);
+    }
+
+    /**
      * Отменить поездку пассажиром
      */
     public function cancelTrip(Trip $trip): Trip

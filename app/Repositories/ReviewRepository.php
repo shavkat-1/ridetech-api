@@ -3,9 +3,10 @@
 namespace App\Repositories;
 
 use App\Models\Review;
+use App\Repositories\Contracts\ReviewRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
-class ReviewRepository
+class ReviewRepository implements ReviewRepositoryInterface
 {
     /**
      * Сохранить новый отзыв

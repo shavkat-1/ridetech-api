@@ -9,7 +9,7 @@ class ReviewDocs
      * path="/trips/{trip}/reviews",
      * operationId="getTripReviews",
      * tags={"Reviews"},
-     * summary="Получить отзывы к поездке",
+     * summary="Список отзывов по поездке",
      * description="Возвращает все отзывы, оставленные в рамках конкретной поездки.",
      * security={{"bearerAuth": {}}},
      * @OA\Parameter(

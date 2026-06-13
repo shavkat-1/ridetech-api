@@ -10,6 +10,29 @@ use Illuminate\Auth\Access\Response;
 
 class TripPolicy
 {
+
+    /**
+     * Может ли пользователь просматривать детали поездки?
+     * Доступно пассажиру-владельцу, назначенному водителю,
+     * или любому водителю, если поездка еще свободна (pending).
+     */
+    public function view(User $user, Trip $trip): bool
+    {
+        return $user->id === $trip->passenger_id
+            || $user->id === $trip->driver_id
+            || ($user->role === UserRole::DRIVER && $trip->status === TripStatus::PENDING);
+    }
+
+    /**
+     * Может ли пассажир обновить поездку?
+     * Только владелец и только пока поездка еще не принята водителем (pending).
+     */
+    public function update(User $user, Trip $trip): bool
+    {
+        return $user->id === $trip->passenger_id
+            && $trip->status === TripStatus::PENDING;
+    }
+
     /**
      * Может ли пассажир отменить поездку?
      * Только если он является пассажиром и поездка еще не началась (статус pending).
