@@ -6,7 +6,7 @@ class AuthDocs
 {
     /**
      * @OA\Post(
-     * path="/auth/register",
+     * path="/register",
      * summary="Регистрация пользователя",
      * description="Позволяет новому пользователю зарегистрироваться в системе.",
      * tags={"Auth"},
@@ -41,7 +41,7 @@ class AuthDocs
 
     /**
      * @OA\Post(
-     * path="/auth/login",
+     * path="/login",
      * summary="Авторизация пользователя",
      * description="Позволяет пользователю войти в систему и получить токен доступа.",
      * tags={"Auth"},
@@ -73,7 +73,7 @@ class AuthDocs
 
     /**
      * @OA\Post(
-     * path="/auth/logout",
+     * path="/logout",
      * summary="Выход из системы",
      * description="Позволяет пользователю выйти из системы, деактивируя текущий токен доступа.",
      * tags={"Auth"},

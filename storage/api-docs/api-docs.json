@@ -15,14 +15,14 @@
         }
     ],
     "paths": {
-        "/auth/register": {
+        "/register": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "Регистрация пользователя",
                 "description": "Позволяет новому пользователю зарегистрироваться в системе.",
-                "operationId": "2243b6476a281adbdc277bc744d74513",
+                "operationId": "583792e105bef9a1c8185b057e989196",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -77,14 +77,14 @@
                 }
             }
         },
-        "/auth/login": {
+        "/login": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "Авторизация пользователя",
                 "description": "Позволяет пользователю войти в систему и получить токен доступа.",
-                "operationId": "dcd4556855ab93aca2b7045603df4de6",
+                "operationId": "de5beccc8812b45c772126d0890e4ce9",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -132,14 +132,14 @@
                 }
             }
         },
-        "/auth/logout": {
+        "/logout": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "Выход из системы",
                 "description": "Позволяет пользователю выйти из системы, деактивируя текущий токен доступа.",
-                "operationId": "5eaf22cd633563a75fa4d29c1b3cb52c",
+                "operationId": "ae4fda5987427aa8002df0d76cc7bc98",
                 "responses": {
                     "200": {
                         "description": "Успешный выход из системы",
